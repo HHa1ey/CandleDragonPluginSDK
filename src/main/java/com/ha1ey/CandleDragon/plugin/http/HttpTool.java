@@ -18,11 +18,12 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 
 public class HttpTool {
-    public static Response get(String url, HashMap<String, String> headers) throws IOException {
+    public static Response get(String url, HashMap<String, String> headers,int connectTimeout) {
         Response response = new Response(0, null , null,null);
         try{
-            HttpURLConnection conn = getConn(url);
+            HttpURLConnection conn = getConn(url,connectTimeout);
             conn.setRequestMethod("GET");
+            //创建迭代器
             for (String key : headers.keySet()) {
                 conn.setRequestProperty(key, headers.get(key));
             }
@@ -37,10 +38,11 @@ public class HttpTool {
         return response;
     }
 
-    public static Response post(String url, HashMap<String, String> headers, String postStr){
+    //POST请求
+    public static Response post(String url, HashMap<String, String> headers, String postStr,int connectTimeout){
         Response response = new Response(0, null, null, null);
         try{
-            HttpURLConnection conn = getConn(url);
+            HttpURLConnection conn = getConn(url,connectTimeout);
             conn.setRequestMethod("POST");
 
             for (String key : headers.keySet()) {
@@ -72,7 +74,7 @@ public class HttpTool {
         return response;
     }
 
-    private static HttpURLConnection getConn(String url) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, KeyManagementException, ClassNotFoundException {
+    private static HttpURLConnection getConn(String url,int connectTimeout) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, KeyManagementException, ClassNotFoundException {
         SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
         TrustManager[] trustManagers = new TrustManager[]{new Cert()};
         sslContext.init(null,trustManagers,new SecureRandom());
@@ -82,8 +84,7 @@ public class HttpTool {
         URL url_obj = new URL(url);
         HttpURLConnection conn = (HttpURLConnection)url_obj.openConnection();
         conn.setRequestProperty("User-Agent",UserAgent.getRandomUA());
-        conn.setConnectTimeout(10000);
-        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(connectTimeout);
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setUseCaches(false);
@@ -91,7 +92,7 @@ public class HttpTool {
         return conn;
     }
 
-    private static String streamToString(InputStream inputStream) {
+    private static String streamToString(InputStream inputStream)throws UnsupportedEncodingException {
         String resultString;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         StringBuffer stringBuffer = new StringBuffer();
