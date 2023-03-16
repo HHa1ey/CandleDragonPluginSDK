@@ -94,7 +94,7 @@ public class HttpTool {
 
     private static String streamToString(InputStream inputStream)throws UnsupportedEncodingException {
         String resultString;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuffer stringBuffer = new StringBuffer();
         String line;
         try{
