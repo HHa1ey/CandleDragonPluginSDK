@@ -5,4 +5,5 @@ public interface TargetInfo {
     String getUserAgent();
     int getTimeout();
     String getCharset();
+    String getDNSLog();
 }
